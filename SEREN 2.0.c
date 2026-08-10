@@ -27,27 +27,6 @@ struct Resource resource[MAX];
 struct Request *head = NULL, *tail = NULL;
 
 int totalResource = 0;
-
-char *hospital[5] =
-{
-    "Central Hospital",
-    "City Medical",
-    "Savar General",
-    "Life Care",
-    "Emergency Blood Bank"
-};
-
-int graph[5][5] =
-{
-    {0,1,1,0,0},
-    {1,0,0,1,0},
-    {1,0,0,1,1},
-    {0,1,1,0,1},
-    {0,0,1,1,0}
-};
-
-int visited[5];
-
 void addResource()
 {
     if(totalResource >= MAX)
@@ -55,9 +34,7 @@ void addResource()
         printf("\nStorage Full!\n");
         return;
     }
-
     printf("\n===== ADD RESOURCE =====\n");
-
     printf("Resource ID: ");
     scanf("%d", &resource[totalResource].id);
     getchar();
@@ -82,6 +59,7 @@ void addResource()
     scanf("%d", &resource[totalResource].priority);
 
     totalResource++;
+
     printf("\nResource Added Successfully!\n");
 }
 
@@ -105,41 +83,6 @@ void displayResource()
     }
 }
 
-void searchResource()
-{
-    char name[40];
-    int i, found = 0;
-    if(totalResource == 0)
-    {
-        printf("\nNo Resource Available.\n");
-        return;
-    }
-    getchar();
-
-    printf("\nEnter Resource Name: ");
-    fgets(name, 40, stdin);
-    name[strcspn(name,"\n")] = 0;
-    for(i = 0; i < totalResource; i++)
-    {
-        if(strcmp(resource[i].name, name) == 0)
-        {
-            printf("\n===== RESOURCE FOUND =====\n");
-            printf("ID       : %d\n", resource[i].id);
-            printf("Name     : %s\n", resource[i].name);
-            printf("Type     : %s\n", resource[i].type);
-            printf("Location : %s\n", resource[i].location);
-            printf("Phone    : %s\n", resource[i].phone);
-            printf("Priority : %d\n", resource[i].priority);
-            found = 1;
-            break;
-        }
-    }
-    if(found == 0)
-    {
-        printf("\nResource Not Found.\n");
-    }
-}
-
 void addRequest()
 {
     struct Request *newNode;
@@ -149,7 +92,6 @@ void addRequest()
         printf("\nMemory Allocation Failed!\n");
         return;
     }
-
     printf("\n===== EMERGENCY REQUEST =====\n");
     printf("Request ID: ");
     scanf("%d", &newNode->id);
@@ -166,11 +108,12 @@ void addRequest()
     printf("Location: ");
     fgets(newNode->location, 40, stdin);
     newNode->location[strcspn(newNode->location,"\n")] = 0;
-
     newNode->next = NULL;
 
     if(head == NULL)
+    {
         head = tail = newNode;
+    }
     else
     {
         tail->next = newNode;
@@ -179,50 +122,43 @@ void addRequest()
     printf("\nEmergency Request Added Successfully!\n");
 }
 
-void dfs(int node)
+void displayRequest()
 {
-    int i;
-    visited[node] = 1;
-    printf(" -> %s", hospital[node]);
-    for(i = 0; i < 5; i++)
+    struct Request *temp;
+    if(head == NULL)
     {
-        if(graph[node][i] && !visited[i])
-            dfs(i);
+        printf("\nNo Emergency Request Available.\n");
+        return;
+    }
+    printf("\n===== EMERGENCY REQUESTS =====\n");
+    temp = head;
+    while(temp != NULL)
+    {
+        printf("\nRequest ID : %d", temp->id);
+        printf("\nPatient    : %s", temp->patient);
+        printf("\nNeed       : %s", temp->need);
+        printf("\nLocation   : %s\n", temp->location);
+        temp = temp->next;
     }
 }
-
-void hospitalNetwork()
-{
-    int i;
-    for(i = 0; i < 5; i++)
-    {
-        visited[i] = 0;
-    }
-    printf("\n===== HOSPITAL NETWORK =====\n");
-    printf("Emergency Route using DFS:\n");
-    dfs(0);
-    printf("\n");
-}
-
 int main()
 {
     int choice;
     printf("\n                *SEREN*\n");
     printf(" Smart Emergency Resource Exchange Network\n");
     printf("============================================\n");
+
     while(1)
     {
         printf("\nMain Menu\n");
         printf("1. Add Resource\n");
         printf("2. Display Resources\n");
-        printf("3. Search Resource\n");
-        printf("4. Emergency Request\n");
-        printf("5. Hospital Network (DFS)\n");
+        printf("3. Add Emergency Request\n");
+        printf("4. Display Emergency Requests\n");
         printf("0. Exit\n");
         printf("---------------------------------------\n");
         printf("Enter Choice: ");
         scanf("%d", &choice);
-
         switch(choice)
         {
             case 1:
@@ -234,19 +170,15 @@ int main()
                 break;
 
             case 3:
-                searchResource();
-                break;
-
-            case 4:
                 addRequest();
                 break;
 
-            case 5:
-                hospitalNetwork();
+            case 4:
+                displayRequest();
                 break;
 
             case 0:
-                printf("\nThank You For Using SEREN!\n");
+                printf("\nThank You For Using SEREN !\n");
                 return 0;
 
             default:
