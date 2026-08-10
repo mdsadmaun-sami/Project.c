@@ -212,7 +212,7 @@ int main()
     printf("============================================\n");
     while(1)
     {
-        printf("\n*Main Menu\n");
+        printf("\nMain Menu\n");
         printf("1. Add Resource\n");
         printf("2. Display Resources\n");
         printf("3. Search Resource\n");
