@@ -246,7 +246,7 @@ int main()
                 break;
 
             case 0:
-                printf("\nThank You For Using SEREN Lite!\n");
+                printf("\nThank You For Using SEREN!\n");
                 return 0;
 
             default:
