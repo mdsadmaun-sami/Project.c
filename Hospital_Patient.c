@@ -1,17 +1,20 @@
 #include <stdio.h>
 #include <string.h>
 
-typedef struct {
+typedef struct 
+{
     int id;
     char name[50], phone[20];
 } Patient;
 
-typedef struct {
+typedef struct 
+{
     int id;
     char name[50], specialty[30];
 } Doctor;
 
-typedef struct {
+typedef struct 
+{
     int appId, patientId, doctorId;
     char date[15], time[10], status[15];
 } Appointment;
@@ -20,15 +23,15 @@ void registerPatient(void)
 {
     FILE *fp;
     Patient p;
-
     printf("Patient ID: ");
     scanf("%d", &p.id);
     printf("Name: ");
-    scanf(" %49[^\n]", p.name);
+    scanf(" %50[^\n]", p.name);
     printf("Phone: ");
-    scanf("%19s", p.phone);
+    scanf("%13s", p.phone);
     fp = fopen("patients.dat", "ab");
-    if (fp == NULL) {
+    if (fp == NULL) 
+    {
         printf("File error!\n");
         return;
     }
@@ -124,68 +127,56 @@ void patientMenu(void)
     Patient p;
     FILE *fp;
 
+    printf("\n1. Register\n2. Enter Patient ID\nChoice: ");
+    scanf("%d", &choice);
+
+    if (choice == 1) {
+        registerPatient();
+        return;
+    }
+    if (choice != 2)
+        return;
+
+    printf("Enter Patient ID: ");
+    scanf("%d", &id);
+
+    fp = fopen("patients.dat", "rb");
+    if (fp == NULL) {
+        printf("Please register first.\n");
+        return;
+    }
+
+    while (fread(&p, sizeof(p), 1, fp) == 1) {
+        if (p.id == id)
+            break;
+    }
+    fclose(fp);
+
+    if (p.id != id) {
+        printf("Patient ID not found.\n");
+        return;
+    }
+
     do {
-        printf("\n1. Register\n2. Enter Patient ID\n3. Exit\nChoice: ");
+        printf("\n--- PATIENT MENU ---\n");
+        printf("1. View Doctors\n2. Book Appointment\n");
+        printf("3. View Appointment History\n0. Back\nChoice: ");
         scanf("%d", &choice);
 
-        if (choice == 1) {
-            registerPatient();
-            continue;
-        }
-        if (choice == 3) {
-            printf("Thank You!\n");
-            break;
-        }
-        if (choice != 2) {
+        if (choice == 1)
+            viewDoctors();
+        else if (choice == 2)
+            bookAppointment(id);
+        else if (choice == 3)
+            viewHistory(id);
+        else if (choice != 0)
             printf("Wrong choice!\n");
-            continue;
-        }
 
-        printf("Enter Patient ID: ");
-        scanf("%d", &id);
-
-        fp = fopen("patients.dat", "rb");
-        if (fp == NULL) {
-            printf("Please register first.\n");
-            continue;
-        }
-
-        int found = 0;
-        while (fread(&p, sizeof(p), 1, fp) == 1) {
-            if (p.id == id) {
-                found = 1;
-                break;
-            }
-        }
-        fclose(fp);
-
-        if (!found) {
-            printf("Patient ID not found.\n");
-            continue;
-        }
-
-        do {
-            printf("\n--- PATIENT MENU ---\n");
-            printf("1. View Doctors\n2. Book Appointment\n");
-            printf("3. View Appointment History\n0. Back\nChoice: ");
-            scanf("%d", &choice);
-
-            if (choice == 1)
-                viewDoctors();
-            else if (choice == 2)
-                bookAppointment(id);
-            else if (choice == 3)
-                viewHistory(id);
-            else if (choice != 0)
-                printf("Wrong choice!\n");
-
-        } while (choice != 0);
-
-    } while (1);
+    } while (choice != 0);
 }
 
 /* For separate testing only.
-   Need to be removed this main() when joining with the group project. */
+   Remove this main() when joining with the group project. */
 int main(void)
 {
     patientMenu();
